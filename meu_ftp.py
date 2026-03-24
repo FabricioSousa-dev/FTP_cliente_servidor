@@ -1,25 +1,17 @@
 import ftplib
 from pathlib import Path
-import ssl
-
-class MeuFTP_TLS(ftplib.FTP_TLS):
-    def ntransfercmd(self, cmd, rest=None):
-        conn, size = ftplib.FTP.ntransfercmd(self, cmd, rest)
-        if self._prot_p:
-            conn = self.context.wrap_socket(conn,
-                                            server_hostname=self.host,
-                                            session=self.sock.session)
-        return conn, size
 
 try:
     from tqdm import tqdm
+
     TEM_TQDM = True
 except ImportError:
     TEM_TQDM = False
 
+
 class ClienteFTPAvancado:
     def __init__(self, conexao_segura: bool = False):
-        self.ftp = MeuFTP_TLS() if conexao_segura else ftplib.FTP()
+        self.ftp = ftplib.FTP_TLS() if conexao_segura else ftplib.FTP()
         self.conectado = False
         self.seguro = conexao_segura
 
@@ -121,6 +113,7 @@ class ClienteFTPAvancado:
                 self.conectado = False
                 print("[*] Desconectado.")
 
+
 def menu():
     print("=======================================")
     print("      CLIENTE FTP/FTPS AVANÇADO        ")
@@ -149,4 +142,11 @@ def menu():
             local = input("Caminho do arquivo no PC: ")
             cliente.enviar_arquivo(local)
         elif opcao == '4':
-            cliente.des
+            cliente.desconectar()
+            break
+        else:
+            print("[-] Opção inválida.")
+
+
+if __name__ == "__main__":
+    menu()
